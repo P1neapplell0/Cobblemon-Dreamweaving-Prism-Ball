@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cobblemon Poké Ball Development"
+  short_description: "Build and debug animated Cobblemon Poké Balls"
+  default_prompt: "Use $develop-cobblemon-pokeballs to add or repair a custom animated Cobblemon Poké Ball."

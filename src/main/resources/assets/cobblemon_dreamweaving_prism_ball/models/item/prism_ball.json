@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "cobblemon_dreamweaving_prism_ball:item/poke_balls/prism_ball"
+  }
+}

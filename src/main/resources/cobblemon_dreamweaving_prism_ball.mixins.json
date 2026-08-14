@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.p1nero.cobblemon.dreamweaving_prism_ball.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "PokeBallItemMixin"
+  ],
+  "client": [
+    "client.TexturedModelCompanionMixin",
+    "client.TexturedModelMixin",
+    "client.CubeListBuilderMixin",
+    "client.CubeDefinitionMixin",
+    "client.CubePolygonsAccessor",
+    "client.EntityRenderDispatcherMixin",
+    "client.VaryingModelRepositoryMixin",
+    "client.PokeBallPosableStateMixin",
+    "client.PokeBallRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

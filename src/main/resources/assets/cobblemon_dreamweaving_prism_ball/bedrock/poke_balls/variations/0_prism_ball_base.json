@@ -1,0 +1,13 @@
+{
+  "pokeball": "cobblemon_dreamweaving_prism_ball:prism_ball",
+  "order": 0,
+  "variations": [
+    {
+      "aspects": [],
+      "poser": "cobblemon_dreamweaving_prism_ball:prism_ball",
+      "model": "cobblemon_dreamweaving_prism_ball:prism_ball.geo",
+      "texture": "cobblemon_dreamweaving_prism_ball:textures/poke_balls/prism_ball.png",
+      "layers": []
+    }
+  ]
+}
