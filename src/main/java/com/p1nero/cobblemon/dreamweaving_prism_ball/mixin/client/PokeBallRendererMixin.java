@@ -4,8 +4,10 @@ import com.cobblemon.mod.common.client.render.models.blockbench.pokeball.Posable
 import com.cobblemon.mod.common.client.render.pokeball.PokeBallRenderer;
 import com.cobblemon.mod.common.entity.pokeball.EmptyPokeBallEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.p1nero.cobblemon.dreamweaving_prism_ball.client.render.PrismCaptureEffectRenderer;
 import com.p1nero.cobblemon.dreamweaving_prism_ball.client.render.PrismBallRenderTypes;
+import com.p1nero.cobblemon.dreamweaving_prism_ball.client.render.VanillaModelVertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -52,6 +54,14 @@ public abstract class PokeBallRendererMixin {
             index = 2)
     private int dreamweaving$useFullBright(int packedLight) {
         return dreamweaving$fullBright ? LightTexture.FULL_BRIGHT : packedLight;
+    }
+
+    @ModifyArg(method = "render(Lcom/cobblemon/mod/common/entity/pokeball/EmptyPokeBallEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At(value = "INVOKE",
+                    target = "Lcom/cobblemon/mod/common/client/render/models/blockbench/pokeball/PosablePokeBallModel;renderToBuffer(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V"),
+            index = 1)
+    private VertexConsumer dreamweaving$useVanillaModelPolygons(VertexConsumer consumer) {
+        return dreamweaving$fullBright ? new VanillaModelVertexConsumer(consumer) : consumer;
     }
 
     @Inject(method = "render(Lcom/cobblemon/mod/common/entity/pokeball/EmptyPokeBallEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
