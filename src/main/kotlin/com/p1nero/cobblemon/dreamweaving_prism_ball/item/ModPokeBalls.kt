@@ -35,13 +35,18 @@ object ModPokeBalls {
         registerWithCobblemon(DREAMWEAVING_PRISM)
     }
 
-    fun registerCaptureEffects() {
+    fun registerGuaranteeHandlers() {
         CobblemonEvents.POKEMON_CAPTURED.subscribe(Consumer { event ->
             applyGuarantees(event.pokeBallEntity.pokeBall, event.pokemon)
         })
-        // Fallback: a Pokemon caught by one of these balls can enter the party without the capture
-        // hook above ever running (other mods granting Pokemon, trades, saves written before the
-        // ball was caught, ...). Re-assert the guarantees whenever it is sent out of its ball.
+        // `caughtBall` is also assigned outside of a capture, without POKEMON_CAPTURED ever firing:
+        // fossil revival and shed evolution take the ball from the player's hands/inventory, and
+        // `pokeball=` properties (commands, datapacks, NBT) and save conversions assign it directly.
+        // Re-assert the guarantees as soon as such a Pokemon joins the party and again every time it
+        // is sent out of its ball, so it is never left without them.
+        CobblemonEvents.POKEMON_GAINED.subscribe(Consumer { event ->
+            applyGuarantees(event.pokemon.caughtBall, event.pokemon)
+        })
         CobblemonEvents.POKEMON_SENT_PRE.subscribe(Consumer { event ->
             applyGuarantees(event.pokemon.caughtBall, event.pokemon)
         })

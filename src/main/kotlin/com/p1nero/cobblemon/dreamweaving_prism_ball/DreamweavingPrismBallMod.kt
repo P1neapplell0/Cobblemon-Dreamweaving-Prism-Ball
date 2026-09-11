@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 class DreamweavingPrismBallMod(modBus: IEventBus) {
     init {
         ModPokeBalls.ITEMS.register(modBus)
-        ModPokeBalls.registerCaptureEffects()
+        ModPokeBalls.registerGuaranteeHandlers()
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ClientResourceEvents.register(modBus)
         }
