@@ -7,6 +7,7 @@ import com.cobblemon.mod.common.api.pokeball.catching.modifiers.GuaranteedModifi
 import com.cobblemon.mod.common.api.pokemon.stats.Stats
 import com.cobblemon.mod.common.item.PokeBallItem
 import com.cobblemon.mod.common.pokeball.PokeBall
+import com.cobblemon.mod.common.pokemon.Pokemon
 import com.p1nero.cobblemon.dreamweaving_prism_ball.DreamweavingPrismBallMod
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
@@ -36,14 +37,42 @@ object ModPokeBalls {
 
     fun registerCaptureEffects() {
         CobblemonEvents.POKEMON_CAPTURED.subscribe(Consumer { event ->
-            when (event.pokeBallEntity.pokeBall.name) {
-                PRISM_ID -> event.pokemon.shiny = true
-                DREAMWEAVING_PRISM_ID -> {
-                    event.pokemon.shiny = true
-                    PERMANENT_STATS.forEach { stat -> event.pokemon.setIV(stat, 31) }
-                }
-            }
+            applyGuarantees(event.pokeBallEntity.pokeBall, event.pokemon)
         })
+        // Fallback: a Pokemon caught by one of these balls can enter the party without the capture
+        // hook above ever running (other mods granting Pokemon, trades, saves written before the
+        // ball was caught, ...). Re-assert the guarantees whenever it is sent out of its ball.
+        CobblemonEvents.POKEMON_SENT_PRE.subscribe(Consumer { event ->
+            applyGuarantees(event.pokemon.caughtBall, event.pokemon)
+        })
+    }
+
+    /**
+     * Brings [pokemon] up to the guarantees of the ball it was caught with. Only missing
+     * properties are written, so this is safe to run on every send-out.
+     */
+    private fun applyGuarantees(ball: PokeBall?, pokemon: Pokemon) {
+        when (ball?.name) {
+            PRISM_ID -> ensureShiny(pokemon)
+            DREAMWEAVING_PRISM_ID -> {
+                ensureShiny(pokemon)
+                ensurePerfectIVs(pokemon)
+            }
+        }
+    }
+
+    private fun ensureShiny(pokemon: Pokemon) {
+        if (!pokemon.shiny) {
+            pokemon.shiny = true
+        }
+    }
+
+    private fun ensurePerfectIVs(pokemon: Pokemon) {
+        PERMANENT_STATS.forEach { stat ->
+            if (pokemon.ivs[stat] != PERFECT_IV) {
+                pokemon.setIV(stat, PERFECT_IV)
+            }
+        }
     }
 
     private fun createBall(identifier: ResourceLocation) = PokeBall(
@@ -87,6 +116,8 @@ object ModPokeBalls {
 
     private fun id(path: String): ResourceLocation =
         ResourceLocation.fromNamespaceAndPath(DreamweavingPrismBallMod.ID, path)
+
+    private const val PERFECT_IV = 31
 
     private val PERMANENT_STATS = listOf(
         Stats.HP,
